@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 
 <html>
-
-<head>
+  <head>
     <title>Example 01.01 - Basic skeleton</title>
     <script type="text/javascript" src="../libs/three.js"></script>
     <style>
-        body {
-            /* set margin to 0 and overflow to hidden, to
+      /* css가 적용되어 있는데, 이는  Three.js scene을 만들 때, 스크롤 바를
+        제거하기 위함이다*/
+      body {
+        /* set margin to 0 and overflow to hidden, to
              use the complete page */
-            margin: 0;
-            overflow: hidden;
-        }
+        margin: 0;
+        overflow: hidden;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <!-- Div which will hold the Output -->
+    <div id="WebGL-output"></div>
 
-<!-- Div which will hold the Output -->
-<div id="WebGL-output">
-</div>
-
-<!-- Javascript code that runs our Three.js examples -->
-<script type="text/javascript">
-
-    // once everything is loaded, we run our Three.js stuff.
-    function init() {
+    <!-- Javascript code that runs our Three.js examples -->
+    <script type="text/javascript">
+      // once everything is loaded, we run our Three.js stuff.
+      function init() {
         // here we'll put the Three.js stuff
-    }
-    window.onload = init
-
-</script>
-</body>
+      }
+      window.onload = init;
+    </script>
+  </body>
 </html>
+
+<!-- Three.js는 두가지 버전이 있다.
+1. Three.min.js : 이름에서 알 수 있듯이 이는 Three.js의 축소된 버전이며, UglifyJS를 사용하여 만들었다.
+2. Three,js : 아주 보통의 Three.js 라이브러리이디ㅏ. -->
