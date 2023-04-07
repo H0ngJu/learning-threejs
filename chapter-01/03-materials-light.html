@@ -1,49 +1,57 @@
 <!DOCTYPE html>
 
 <html>
-
-<head>
+  <!-- material에 light 추가 
+script spotlight코드로 ㄱㄱ-->
+  <head>
     <title>Example 01.03 - Materials and light</title>
     <script type="text/javascript" src="../libs/three.js"></script>
     <script type="text/javascript" src="../libs/stats.js"></script>
     <script type="text/javascript" src="../libs/dat.gui.js"></script>
     <style>
-        body {
-            /* set margin to 0 and overflow to hidden, to go fullscreen */
-            margin: 0;
-            overflow: hidden;
-        }
+      body {
+        /* set margin to 0 and overflow to hidden, to go fullscreen */
+        margin: 0;
+        overflow: hidden;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <!-- Div which will hold the Output -->
+    <div id="WebGL-output"></div>
 
-<!-- Div which will hold the Output -->
-<div id="WebGL-output">
-</div>
-
-<!-- Javascript code that runs our Three.js examples -->
-<script type="text/javascript">
-
-    // once everything is loaded, we run our Three.js stuff.
-    function init() {
-
+    <!-- Javascript code that runs our Three.js examples -->
+    <script type="text/javascript">
+      // once everything is loaded, we run our Three.js stuff.
+      function init() {
         // create a scene, that will hold all our elements such as objects, cameras and lights.
         var scene = new THREE.Scene();
 
         // create a camera, which defines where we're looking at.
-        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        var camera = new THREE.PerspectiveCamera(
+          45,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        );
 
         // create a render and set the size
         var renderer = new THREE.WebGLRenderer();
-
-        renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+        //그림자를 추가하기 위한 코드
+        //일단 renderer에게 shadow가 필요하다고 알려줘야 함.
+        //따라서, shadowMapEnabled를 true로 변경
+        //그리고 어떤 object가 정확하게 그림자를 받는지,투사하는지 명시해주어야 함 >> plane,cube,sphere에 변경
+        renderer.setClearColor(new THREE.Color(0xeeeeee, 1.0));
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMapEnabled = true;
 
         // create the ground plane
         var planeGeometry = new THREE.PlaneGeometry(60, 20);
-        var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+        //MeshLambertMaterial 추가 !! MeshLambertMaterial의 색상값에 따라서 geometry의 색이 달라진단
+        //기존 코드 var planeMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc });
+        var planeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
         var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        //resceiveShadow를 통해 그림자를 plane에 투사함
         plane.receiveShadow = true;
 
         // rotate and position the plane
@@ -57,8 +65,10 @@
 
         // create a cube
         var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-        var cubeMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
+        //MeshLambertMaterail 추가 !!
+        var cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
         var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        //castShadow를 통해 그림자를 생성함
         cube.castShadow = true;
 
         // position the cube
@@ -70,13 +80,15 @@
         scene.add(cube);
 
         var sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
-        var sphereMaterial = new THREE.MeshLambertMaterial({color: 0x7777ff});
+        //MeshLambertMaterial 추가 !!
+        var sphereMaterial = new THREE.MeshLambertMaterial({ color: 0x7777ff });
         var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
         // position the sphere
         sphere.position.x = 20;
         sphere.position.y = 4;
         sphere.position.z = 2;
+        //castShadow를 통해 그림자를 생성함
         sphere.castShadow = true;
 
         // add the sphere to the scene
@@ -88,21 +100,29 @@
         camera.position.z = 30;
         camera.lookAt(scene.position);
 
+        //위까지는 중복, 새로 추가된 코드
         // add spotlight for the shadows
         var spotLight = new THREE.SpotLight(0xffffff);
+        //-40,60,-10에서 빛을 비춰줌
+        //단순히 빛을 추가한다고 해서 이전 코드랑 다를 바가 x
+        //MeshBasicMaterial은 light와 아무런 상호작용을 하지 않기 때문임
+        //따라서 빛과 상호작용 할 수 있는 MeshLambertMaterial이나 MeshPhongMaterial을 추가해주어야함.
+        //plane이 선언된 곳으로 다시 가서 MeshLamberMaterial을 추가해준다.
         spotLight.position.set(-40, 60, -10);
+        //그림자 추가
+        //renderer로 넘어가서
         spotLight.castShadow = true;
         scene.add(spotLight);
 
         // add the output of the renderer to the html element
-        document.getElementById("WebGL-output").appendChild(renderer.domElement);
+        document
+          .getElementById("WebGL-output")
+          .appendChild(renderer.domElement);
 
         // call the render function
         renderer.render(scene, camera);
-    }
-    window.onload = init;
-
-
-</script>
-</body>
+      }
+      window.onload = init;
+    </script>
+  </body>
 </html>
