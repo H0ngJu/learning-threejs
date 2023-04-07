@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<!-- function renderScene()의 request~()으로 ㄱㄱ -->
 <html>
   <head>
     <title>Example 01.04 - Materials, light and animation</title>
@@ -113,21 +113,31 @@
         function renderScene() {
           stats.update();
           // rotate the cube around its axes
+          // 매초마다 좌표축으로 0.02씩 회전
+          // postion 값을 바꾼게 아니라 rotation을 바꾼 것
           cube.rotation.x += 0.02;
           cube.rotation.y += 0.02;
           cube.rotation.z += 0.02;
 
           // bounce the sphere up and down
+          // cube와는 달리, position값을 바꾼다
+          // 위아래로 jump-motion을 추가하려면, sphere의 x축, y축 값을 바꿔주어야 한다
+          // Math.cos()와 Math.sin()을 통해 step을 조절함에 따라 궤적을 그리도록
+          // 자세한 건 8장에서
           step += 0.04;
           sphere.position.x = 20 + 10 * Math.cos(step);
           sphere.position.y = 2 + 10 * Math.abs(Math.sin(step));
 
           // render using requestAnimationFrame
           // 애니메이션 활성화를 위해 requestAnimationFrame() 불러옴
+          //기존에는 render.render(scene, camera)이런 식으로 scene을 렌더링했지만,
+          //애니메이션을 사용하기 위해서는 requestAnimationFrame을 통해 renderScene()을 추가로 불러와야 한다
           requestAnimationFrame(renderScene);
           renderer.render(scene, camera);
         }
 
+        //initStats() << 얘는 코드 실행시 보이는 좌측상단의 FPS를 보여줌
+        //필요한거 아님
         function initStats() {
           var stats = new Stats();
 
