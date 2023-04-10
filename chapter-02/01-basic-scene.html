@@ -1,54 +1,53 @@
 <!DOCTYPE html>
-
+<!-- 버튼을 클릭할 때마다 추가되는 큐브, this.addCube = function()으로 ㄱㄱ -->
 <html>
-
-<head>
+  <head>
     <title>Example 02.01 - Basic Scene</title>
     <script type="text/javascript" src="../libs/three.js"></script>
 
     <script type="text/javascript" src="../libs/stats.js"></script>
     <script type="text/javascript" src="../libs/dat.gui.js"></script>
     <style>
-        body {
-            /* set margin to 0 and overflow to hidden, to go fullscreen */
-            margin: 0;
-            overflow: hidden;
-        }
+      body {
+        /* set margin to 0 and overflow to hidden, to go fullscreen */
+        margin: 0;
+        overflow: hidden;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div id="Stats-output"></div>
+    <!-- Div which will hold the Output -->
+    <div id="WebGL-output"></div>
 
-<div id="Stats-output">
-</div>
-<!-- Div which will hold the Output -->
-<div id="WebGL-output">
-</div>
-
-<!-- Javascript code that runs our Three.js examples -->
-<script type="text/javascript">
-
-    // once everything is loaded, we run our Three.js stuff.
-    function init() {
-
+    <!-- Javascript code that runs our Three.js examples -->
+    <script type="text/javascript">
+      // once everything is loaded, we run our Three.js stuff.
+      function init() {
         var stats = initStats();
 
         // create a scene, that will hold all our elements such as objects, cameras and lights.
         var scene = new THREE.Scene();
 
         // create a camera, which defines where we're looking at.
-        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        var camera = new THREE.PerspectiveCamera(
+          45,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        );
         scene.add(camera);
 
         // create a render and set the size
         var renderer = new THREE.WebGLRenderer();
 
-        renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+        renderer.setClearColor(new THREE.Color(0xeeeeee, 1.0));
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMapEnabled = true;
 
         // create the ground plane
         var planeGeometry = new THREE.PlaneGeometry(60, 40, 1, 1);
-        var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+        var planeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
         var plane = new THREE.Mesh(planeGeometry, planeMaterial);
         plane.receiveShadow = true;
 
@@ -78,96 +77,116 @@
         scene.add(spotLight);
 
         // add the output of the renderer to the html element
-        document.getElementById("WebGL-output").appendChild(renderer.domElement);
+        document
+          .getElementById("WebGL-output")
+          .appendChild(renderer.domElement);
 
         // call the render function
         var step = 0;
 
-        var controls = new function () {
-            this.rotationSpeed = 0.02;
-            this.numberOfObjects = scene.children.length;
+        var controls = new (function () {
+          this.rotationSpeed = 0.02;
+          this.numberOfObjects = scene.children.length;
 
-            this.removeCube = function () {
-                var allChildren = scene.children;
-                var lastObject = allChildren[allChildren.length - 1];
-                if (lastObject instanceof THREE.Mesh) {
-                    scene.remove(lastObject);
-                    this.numberOfObjects = scene.children.length;
-                }
-            };
-
-            this.addCube = function () {
-
-                var cubeSize = Math.ceil((Math.random() * 3));
-                var cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
-                var cubeMaterial = new THREE.MeshLambertMaterial({color: Math.random() * 0xffffff});
-                var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-                cube.castShadow = true;
-                cube.name = "cube-" + scene.children.length;
-
-
-                // position the cube randomly in the scene
-
-                cube.position.x = -30 + Math.round((Math.random() * planeGeometry.parameters.width));
-                cube.position.y = Math.round((Math.random() * 5));
-                cube.position.z = -20 + Math.round((Math.random() * planeGeometry.parameters.height));
-
-                // add the cube to the scene
-                scene.add(cube);
-                this.numberOfObjects = scene.children.length;
-            };
-
-            this.outputObjects = function () {
-                console.log(scene.children);
+          this.removeCube = function () {
+            //allcChildren = scene에 있는 배열의 수
+            var allChildren = scene.children;
+            //가장 최근에 추가된 object를 가져온다 (index는 배열의 수 -1)
+            var lastObject = allChildren[allChildren.length - 1];
+            //camera나 light을 삭제하면 안되므로, if문으로 lastObject가 Mesh인지 확인한다.
+            //이 과정을 굳이 거칠 필요가 있는가..?
+            if (lastObject instanceof THREE.Mesh) {
+              scene.remove(lastObject);
+              //그리고 GUI에 전체 object 수 업데이트
+              this.numberOfObjects = scene.children.length;
             }
-        };
+          };
+
+          this.addCube = function () {
+            // 크기가 0 ~3사이의 랜덤한 THEE.CubeGeometry가 만들어짐
+            var cubeSize = Math.ceil(Math.random() * 3);
+            var cubeGeometry = new THREE.BoxGeometry(
+              cubeSize,
+              cubeSize,
+              cubeSize
+            );
+            // 색깔 또한 랜덤으로
+            var cubeMaterial = new THREE.MeshLambertMaterial({
+              color: Math.random() * 0xffffff,
+            });
+            var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+            cube.castShadow = true;
+            // 이전 코드와 다른 점은, cube.name 이부분이다.
+            // cube-1, cube-2 이런식으로 이름이 생성된다.
+            // children.length이 코드는 children 배열의 길이(수)를 받아와서 큐브의 이름을 지정해준다.
+            // Scene.getChildByName(name)으로 특정 큐브를 조정할 수 있다.
+            cube.name = "cube-" + scene.children.length;
+
+            // position the cube randomly in the scene
+            // 위치도 랜덤으로 받아옴
+            cube.position.x =
+              -30 + Math.round(Math.random() * planeGeometry.parameters.width);
+            cube.position.y = Math.round(Math.random() * 5);
+            cube.position.z =
+              -20 + Math.round(Math.random() * planeGeometry.parameters.height);
+
+            // add the cube to the scene
+            scene.add(cube);
+            // children은 Three.js 라이브러리의 'Object3D' 클래스의 속성 중 하나이다.
+            // Three.js의 Scnene에 포함된 객채(Object)의 목록을 반환하는 배열이다.
+            // children.length는 Three.js의 Scene에 현재 포함된 객체(Object)의 수를 반환한다.
+            //따라서 새로 만들어진 객체(Object)의 이름은 배열의 수로 지정한다.
+            //이건 GUI에 넣어줄 객체의 총 개수이다.
+            this.numberOfObjects = scene.children.length;
+          };
+
+          this.outputObjects = function () {
+            console.log(scene.children);
+          };
+        })();
 
         var gui = new dat.GUI();
-        gui.add(controls, 'rotationSpeed', 0, 0.5);
-        gui.add(controls, 'addCube');
-        gui.add(controls, 'removeCube');
-        gui.add(controls, 'outputObjects');
-        gui.add(controls, 'numberOfObjects').listen();
+        gui.add(controls, "rotationSpeed", 0, 0.5);
+        gui.add(controls, "addCube");
+        gui.add(controls, "removeCube");
+        gui.add(controls, "outputObjects");
+        gui.add(controls, "numberOfObjects").listen();
 
         render();
 
         function render() {
-            stats.update();
+          stats.update();
 
-            // rotate the cubes around its axes
-            scene.traverse(function (e) {
-                if (e instanceof THREE.Mesh && e != plane) {
+          // rotate the cubes around its axes
+          scene.traverse(function (e) {
+            if (e instanceof THREE.Mesh && e != plane) {
+              e.rotation.x += controls.rotationSpeed;
+              e.rotation.y += controls.rotationSpeed;
+              e.rotation.z += controls.rotationSpeed;
+            }
+          });
 
-                    e.rotation.x += controls.rotationSpeed;
-                    e.rotation.y += controls.rotationSpeed;
-                    e.rotation.z += controls.rotationSpeed;
-                }
-            });
-
-            // render using requestAnimationFrame
-            requestAnimationFrame(render);
-            renderer.render(scene, camera);
+          // render using requestAnimationFrame
+          requestAnimationFrame(render);
+          renderer.render(scene, camera);
         }
 
         function initStats() {
+          var stats = new Stats();
 
-            var stats = new Stats();
+          stats.setMode(0); // 0: fps, 1: ms
 
-            stats.setMode(0); // 0: fps, 1: ms
+          // Align top-left
+          stats.domElement.style.position = "absolute";
+          stats.domElement.style.left = "0px";
+          stats.domElement.style.top = "0px";
 
-            // Align top-left
-            stats.domElement.style.position = 'absolute';
-            stats.domElement.style.left = '0px';
-            stats.domElement.style.top = '0px';
+          document.getElementById("Stats-output").appendChild(stats.domElement);
 
-            document.getElementById("Stats-output").appendChild(stats.domElement);
-
-            return stats;
+          return stats;
         }
-    }
-    window.onload = init
-
-
-</script>
-</body>
+      }
+      window.onload = init;
+    </script>
+  </body>
 </html>
