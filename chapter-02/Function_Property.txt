@@ -1,0 +1,38 @@
+1. add(object)
+    Adds an object to the scene. You can also use this function,
+    as we'll see later, to create groups of objects.
+    씬에 객체를 추가하는 함수
+
+2. children 
+    Returns a list of all the objects that have been added to the scene,
+    including the camera and lights.
+    카메라, 빛을 포함하여 씬에 추가된 모든 객체들의 리스트를 반환
+
+3. getChildByName(name)
+    When you create an object, you can give it a distinct name
+    by using the name attribute. The Scene object has a function
+    that you can use to directly return an object with a specific
+    name.
+    Object(객체)를 생성할 떄 특별한 이름을 부여/리턴 할 수 있음
+
+4. remove(object)
+    If you've got a reference to an object in the scene, you can also
+    remove it from the scene by using this function.
+    Object 삭제 가능
+
+5. traverse(function)
+    The children attribute returns a list of all the children in
+    the scene. With the traverse() function we can also access
+    these children by passing in a callback function.
+    traverse()를 통해 콜백함수를 전달하여(?) children(2참고) 접근 가능
+
+6. fog
+    This property allows you to set the fog for the scene. It will
+    render a haze tha hides the objects that are far away.
+    안개 생성. 멀리있는 object 숨기기 ㄱㄴ
+
+7. overrideMaterial
+    With this property you can force all the objects in the scene
+    to use the same material.
+    씬의 모든 오브젝트들을 같은 material로 적용
+ 
