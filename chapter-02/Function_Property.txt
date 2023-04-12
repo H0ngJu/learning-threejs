@@ -35,4 +35,26 @@
     With this property you can force all the objects in the scene
     to use the same material.
     씬의 모든 오브젝트들을 같은 material로 적용
+
+**The functions and attributes for a mesh(06)**
+
+8. position
+    Determines the position of this object relative to the position
+    of its parent. Most often the parent of an object is a THREE.
+    Scene() object.
+    부모의 위치에 맞춰서 상대적인 값을 정의함. 객체의 부모는 THREE임.
+
+9. rotation
+    With this property you can set the rotation of an object anround
+    any of its axes.
+    좌표축에 맞춰서 회전
+
+10. scale 
+    This property allows you to scale the object around its x,y, and
+    z axes.
+    x,y,z 좌표축에 맞춰서 scale 조절 가능
+
+11. translateX(amount), translateY(amount), translateZ(amout)
+    Moves the object through the specified amount over the x,y,z axis.
+    정해진 양만큼 좌표축 위를 이동
  
